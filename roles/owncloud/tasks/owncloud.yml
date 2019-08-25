@@ -24,12 +24,12 @@
     role_attr_flags=CREATEDB state=present
 
 - name: Ensure repository key for ownCloud is in place
-  apt_key: url=https://download.owncloud.org/download/repositories/stable/Debian_8.0/Release.key state=present
+  apt_key: url=https://download.owncloud.org/download/repositories/stable/Debian_9.0/Release.key state=present
   tags:
     - dependencies
 
 - name: Add ownCloud repository
-  apt_repository: repo='deb http://download.owncloud.org/download/repositories/stable/Debian_8.0/ /'
+  apt_repository: repo='deb http://download.owncloud.org/download/repositories/stable/Debian_9.0/ /'
   tags:
     - dependencies
 
@@ -41,11 +41,15 @@
 - name: Ensure ownCloud directory is in place
   file: state=directory path=/var/www/owncloud
 
-- name: Move ownCloud data to encrypted filesystem
-  command: mv /var/www/owncloud/data /decrypted/owncloud-data creates=/decrypted/owncloud-data
+- name: Create directory for data
+  file: state=directory path=/decrypted/owncloud-data owner=www-data group=www-data
 
-- name: Link ownCloud data directory to encrypted filesystem
-  file: src=/decrypted/owncloud-data dest=/var/www/owncloud/data owner=www-data group=www-data state=link
+- name: Update configuration to use data directory
+  lineinfile:
+    dest: /var/www/owncloud/config/config.php
+    regexp: "datadirectory"
+    line: "  'datadirectory' => '/decrypted/owncloud-data',"
+    state: present
 
 - name: Configure Apache for ownCloud
   template: src=etc_apache2_sites-available_owncloud.j2 dest=/etc/apache2/sites-available/owncloud.conf group=root
