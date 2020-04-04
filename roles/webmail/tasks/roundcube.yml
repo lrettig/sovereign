@@ -5,15 +5,18 @@
 - name: Install roundcube dependencies
   apt: pkg={{ item }} state=present
   with_items:
-    - php5
-    - php5-sqlite
-    - php5-mcrypt
-    - php5-gd
-    - php5-pspell
-    - php5-intl
-    - php5-curl
+    - php
+    - php-sqlite3
+    - php-dev
+    - libmcrypt-dev
+    - php-pear
+    - php-gd
+    - php-pspell
+    - php-intl
+    - php-curl
     - aspell
     - aspell-en
+    - php-mbstring
   tags:
     - dependencies
 
@@ -29,20 +32,22 @@
            dest=/tmp/composer-installer
 
 - name: Copy composer configuration
-  copy: src=var_www_roundcube_composer.json dest=/var/www/roundcube/composer.json
-    owner=root
-    group=www-data
-    mode=0644
+  copy: src=var_www_roundcube_composer.json dest=/home/{{ main_user_name }}/composer.json
+    owner={{ main_user_name }}
 
 - name: Install Composer
   command: php /tmp/composer-installer
-           chdir=/root
-           creates=/root/composer.phar
+           chdir=/home/{{ main_user_name }}
+           creates=/home/{{ main_user_name }}/composer.phar
+  become: yes
+  become_user: "{{ main_user_name }}"
 
 - name: Initialize composer
-  command: php /root/composer.phar install --no-dev
+  command: php /home/{{ main_user_name }}/composer.phar install --no-dev
            chdir=/var/www/roundcube
            creates=/var/www/roundcube/vendor/autoload.php
+  become: yes
+  become_user: "{{ main_user_name }}"
 
 - name: Remove installer directory
   file: path=/var/www/roundcube/installer state=absent
