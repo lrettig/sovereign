@@ -1,0 +1,22 @@
+---
+# Configures PHP with mcrypt
+
+- name: Install PHP and related packages
+  apt: pkg={{ item }} state=present
+  with_items:
+    - gcc
+    - make
+    - autoconf
+    - libc-dev
+    - pkg-config
+    - libmcrypt-dev
+    - php-dev
+    - php-pear
+
+- name: Update pecl
+  shell: pecl channel-update pecl.php.net
+  
+- name: Install mcrypt
+  shell: pecl install mcrypt
+  
+# Still need to grab installing path and add to cli and apache2 php.ini configuration
