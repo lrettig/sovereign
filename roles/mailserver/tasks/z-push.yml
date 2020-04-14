@@ -9,7 +9,7 @@
     - dependencies
 
 - name: Install required packages for z-push
-  apt: pkg={{ item }} state=installed
+  apt: pkg={{ item }} state=present
   with_items:
     - z-push-config-apache
     - z-push-backend-imap
