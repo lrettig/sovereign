@@ -8,6 +8,9 @@
   tags:
     - dependencies
 
+- name: Set up selfoss directory
+  file: dest=/var/www/selfoss state=directory owner=www-data group=www-data recurse=yes
+
 - name: Clone Selfoss
   become_user: www-data
   git: repo=https://github.com/SSilence/selfoss.git
