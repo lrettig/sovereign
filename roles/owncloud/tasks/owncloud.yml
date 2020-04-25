@@ -44,6 +44,9 @@
 - name: Create directory for data
   file: state=directory path=/decrypted/owncloud-data owner=www-data group=www-data
 
+- name: Copy default config file
+  command: cp /var/www/owncloud/config/config.sample.php /var/www/owncloud/config/config.php
+
 - name: Update configuration to use data directory
   lineinfile:
     dest: /var/www/owncloud/config/config.php
