@@ -14,5 +14,5 @@
   notify: restart solr
 
 - name: Create Solr index directory
-  file: state=directory path=/decrypted/solr group=tomcat8 owner=tomcat8
+  file: state=directory path=/decrypted/solr group=tomcat owner=tomcat
   notify: restart solr
